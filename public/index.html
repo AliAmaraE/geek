@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>💻 MyShop</title>
+  <style>
+    :root { --bg: #f6f8fb; --card: #ffffff; --accent: #007bff; --accent-dark: #0056b3; --muted: #6b7280; --border: #e5e7eb; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, var(--bg) 0%, #f0f4f8 100%); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .login-container { background: var(--card); padding: 40px; border-radius: 16px; box-shadow: 0 20px 60px rgba(15,23,42,0.1); width: 380px; animation: slideIn 0.4s ease-out; text-align: center; }
+    .logo { height: 48px; display: block; margin: 0 auto 20px; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    h2 { margin: 0 0 32px 0; font-size: 28px; font-weight: 600; color: #0f172a; text-align: center; letter-spacing: -0.5px; }
+    form { display: flex; flex-direction: column; gap: 12px; }
+    input { padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px; font-size: 15px; transition: all 0.2s; background: #fafbfc; width: 100%; }
+    input:focus { outline: none; border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(0,123,255,0.1); }
+    input::placeholder { color: #9ca3af; }
+    button { padding: 14px 16px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; width: 100%; }
+    button:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,123,255,0.3); }
+    button:active { transform: translateY(0); }
+    #result { margin-top: 16px; padding: 12px; font-weight: 600; text-align: center; color: #d9534f; border-radius: 8px; animation: fadeIn 0.3s ease-out; }
+    #result.success { color: #059669; background: #ecfdf5; border-left: 4px solid #10b981; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 480px) { .login-container { width: 100%; margin: 20px; padding: 32px 24px; } h2 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="/logo.png" alt="Logo" class="logo">
+    <form id="loginForm">
+      <input type="text" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <p id="result"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      result.textContent = data.message;
+      if(data.success){
+        result.classList.add('success');
+        // Redirect to products page
+        window.location.href = data.redirect || '/products';
+      } else {
+        result.classList.remove('success');
+      }
+    });
+  </script>
+</body>
+</html>
